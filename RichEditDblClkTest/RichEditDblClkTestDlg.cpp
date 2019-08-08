@@ -81,7 +81,7 @@ LRESULT CALLBACK RicheditSubclass(
 {
     LRESULT classified, is_delim;
     if (uMsg == WM_LBUTTONDBLCLK) {
-        //::SendMessageW(hRichEdit, WM_SETREDRAW, FALSE, 0);
+        ::SendMessageW(hRichEdit, WM_SETREDRAW, FALSE, 0);
         CHARRANGE range;
         ::SendMessageW(hRichEdit, EM_EXGETSEL, 0, (LPARAM)&range);
         classified = ::SendMessageW(hRichEdit, EM_FINDWORDBREAK, WB_CLASSIFY, range.cpMin);
@@ -94,7 +94,7 @@ LRESULT CALLBACK RicheditSubclass(
         ::SendMessageW(hRichEdit, EM_EXGETSEL, 0, (LPARAM)&range);
         auto is_white = classified & WBF_ISWHITE;
         if (is_delim || is_white) {
-            range.cpMin = (LONG)::SendMessageW(hRichEdit, EM_FINDWORDBREAK, WB_LEFTBREAK, range.cpMax);
+            range.cpMin = (LONG)::SendMessageW(hRichEdit, EM_FINDWORDBREAK, WB_LEFT, range.cpMax);
             TRACE("%d\n", range.cpMin);
         }
         else {
@@ -103,10 +103,18 @@ LRESULT CALLBACK RicheditSubclass(
                 range.cpMax = new_max;
             }
         }
+        CHARRANGE tmp{ range.cpMin, range.cpMin };
+        ::SendMessageW(hRichEdit, EM_EXSETSEL, 0, (LPARAM)&tmp);
+        ::SendMessageW(hRichEdit, WM_SETREDRAW, TRUE, 0);
         ::SendMessageW(hRichEdit, EM_EXSETSEL, 0, (LPARAM)&range);
+#ifdef DEBUG
+        ::SendMessageW(hRichEdit, EM_EXGETSEL, 0, (LPARAM)&tmp);
+        ASSERT(range.cpMax == tmp.cpMax && range.cpMin == tmp.cpMin);
+#endif
     }
     return result;
 }
+
 #include <algorithm>
 #include <map>
 HWND hRichEdit;
