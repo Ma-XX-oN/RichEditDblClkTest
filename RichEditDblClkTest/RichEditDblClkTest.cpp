@@ -39,7 +39,7 @@ CRichEditDblClkTestApp theApp;
 
 BOOL CRichEditDblClkTestApp::InitInstance()
 {
-	// InitCommonControlsEx() is required on Windows XP if an application
+// TODO: call AfxInitRichEdit2() to initialize richedit2 library.\n"	// InitCommonControlsEx() is required on Windows XP if an application
 	// manifest specifies use of ComCtl32.dll version 6 or later to enable
 	// visual styles.  Otherwise, any window creation will fail.
 	INITCOMMONCONTROLSEX InitCtrls;
@@ -70,6 +70,7 @@ BOOL CRichEditDblClkTestApp::InitInstance()
 	// such as the name of your company or organization
 	SetRegistryKey(_T("Local AppWizard-Generated Applications"));
 
+    AfxInitRichEdit2();
 	CRichEditDblClkTestDlg dlg;
 	m_pMainWnd = &dlg;
 	INT_PTR nResponse = dlg.DoModal();

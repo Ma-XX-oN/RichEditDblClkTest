@@ -259,3 +259,6 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+
+# Visual Studio has some temp folder that needs to be ignored.
+enc_temp_folder/**
