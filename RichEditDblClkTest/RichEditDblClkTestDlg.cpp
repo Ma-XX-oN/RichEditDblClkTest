@@ -65,6 +65,10 @@ BEGIN_MESSAGE_MAP(CRichEditDblClkTestDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+    ON_BN_CLICKED(IDC_LEFT,       &CRichEditDblClkTestDlg::OnBnClickedLeft)
+    ON_BN_CLICKED(IDC_LEFTBREAK,  &CRichEditDblClkTestDlg::OnBnClickedLeftbreak)
+    ON_BN_CLICKED(IDC_RIGHT,      &CRichEditDblClkTestDlg::OnBnClickedRight)
+    ON_BN_CLICKED(IDC_RIGHTBREAK, &CRichEditDblClkTestDlg::OnBnClickedRightbreak)
 END_MESSAGE_MAP()
 
 
@@ -94,7 +98,7 @@ LRESULT CALLBACK RicheditSubclass(
         ::SendMessageW(hRichEdit, EM_EXGETSEL, 0, (LPARAM)&range);
         auto is_white = classified & WBF_ISWHITE;
         if (is_delim || is_white) {
-            range.cpMin = (LONG)::SendMessageW(hRichEdit, EM_FINDWORDBREAK, WB_LEFT, range.cpMax);
+            range.cpMin = (LONG)::SendMessageW(hRichEdit, EM_FINDWORDBREAK, WB_LEFTBREAK, range.cpMax);
             TRACE("%d\n", range.cpMin);
         }
         else {
@@ -231,6 +235,8 @@ BOOL CRichEditDblClkTestDlg::OnInitDialog()
     ::SetWindowSubclass(hRichEdit, RicheditSubclass, 0, 0);
     ::SendMessageW(hRichEdit, EM_SETWORDBREAKPROC, 0, (LPARAM)Editwordbreakproc);
 
+    m_hAccelTable = LoadAccelerators(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDR_ACCELERATOR1));
+
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -283,3 +289,51 @@ HCURSOR CRichEditDblClkTestDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+
+
+BOOL CRichEditDblClkTestDlg::PreTranslateMessage(MSG* pMsg)
+{
+    if (m_hAccelTable)
+    {
+        if (::TranslateAccelerator(m_hWnd, m_hAccelTable, pMsg))
+            return(TRUE);
+    }
+
+    return CDialogEx::PreTranslateMessage(pMsg);
+}
+
+
+void CRichEditDblClkTestDlg::OnBnClickedLeft()
+{
+    CHARRANGE range;
+    m_richedit.SendMessage(EM_EXGETSEL, 0, (LPARAM)&range);
+    range.cpMin = range.cpMax = m_richedit.SendMessage(EM_FINDWORDBREAK, WB_LEFT, range.cpMin);
+    m_richedit.SendMessage(EM_EXSETSEL, 0, (LPARAM)&range);
+}
+
+
+void CRichEditDblClkTestDlg::OnBnClickedLeftbreak()
+{
+    CHARRANGE range;
+    m_richedit.SendMessage(EM_EXGETSEL, 0, (LPARAM)&range);
+    range.cpMin = range.cpMax = m_richedit.SendMessage(EM_FINDWORDBREAK, WB_LEFTBREAK, range.cpMin);
+    m_richedit.SendMessage(EM_EXSETSEL, 0, (LPARAM)&range);
+}
+
+
+void CRichEditDblClkTestDlg::OnBnClickedRight()
+{
+    CHARRANGE range;
+    m_richedit.SendMessage(EM_EXGETSEL, 0, (LPARAM)&range);
+    range.cpMin = range.cpMax = m_richedit.SendMessage(EM_FINDWORDBREAK, WB_RIGHT, range.cpMin);
+    m_richedit.SendMessage(EM_EXSETSEL, 0, (LPARAM)&range);
+}
+
+
+void CRichEditDblClkTestDlg::OnBnClickedRightbreak()
+{
+    CHARRANGE range;
+    m_richedit.SendMessage(EM_EXGETSEL, 0, (LPARAM)&range);
+    range.cpMin = range.cpMax = m_richedit.SendMessage(EM_FINDWORDBREAK, WB_RIGHTBREAK, range.cpMin);
+    m_richedit.SendMessage(EM_EXSETSEL, 0, (LPARAM)&range);
+}

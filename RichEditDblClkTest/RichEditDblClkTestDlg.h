@@ -24,6 +24,7 @@ public:
 // Implementation
 protected:
 	HICON m_hIcon;
+    HACCEL m_hAccelTable;
 
 	// Generated message map functions
 	virtual BOOL OnInitDialog();
@@ -33,4 +34,9 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
     CRichEditCtrl m_richedit;
+    virtual BOOL PreTranslateMessage(MSG* pMsg);
+    afx_msg void OnBnClickedLeft();
+    afx_msg void OnBnClickedLeftbreak();
+    afx_msg void OnBnClickedRight();
+    afx_msg void OnBnClickedRightbreak();
 };
